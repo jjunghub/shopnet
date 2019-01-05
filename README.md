@@ -21,9 +21,15 @@ havesd
 [INFO ] 2019-01-05 15:29:04 [words.py][get_word_idx:116] Total **500,424** words to be embedded are selected.
 4,202 words from category-name and 500,000 from meta-info(least common word : ('산초분말', 4))
 
-## 2. preprocess dataset for train/dev
+## 2. prepare train/dev data with text indexing
 
 ```
 # check config's word_path, *_data_list, data_root, max_len
-python3 datashopnet.py make-db train --train-ratio=0.85 --sequence=False
+python3 datashopnet.py make-db train --train-ratio=0.85 --sequence=True
+```
+
+## 3. train
+
+```
+shopnet_ensemble.py train --case='image' --load=False
 ```

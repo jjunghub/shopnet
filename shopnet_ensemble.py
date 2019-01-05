@@ -34,7 +34,7 @@ class ShopNet :
         self.N_Cs = 3190-1
         self.N_Cd = 404-1
 
-    def model_image(self, trainable=True, load=True) :
+    def model_image(self, trainable=True, load=False) :
         if load :
             # model = tf.keras.models.load_model("./ensemble1/image_model.h5")
             model = self.model_image(load=False)
@@ -79,13 +79,13 @@ class ShopNet :
         return model
 
 
-    def model_text(self, trainable = True) : 
+    def model_text(self, trainable = True, load=False) : 
         with tf.name_scope('text_classifier') :
             pf = 'GAP'
 
             inputs_text = tf.keras.Input(shape=(opt.max_len,), name=pf+'IN')
 
-            embd = tf.keras.layers.Embedding(self.voca_size, self.embd_size, trainable=trainable, name=pf+'EM')
+            embd = tf.keras.layers.Embedding(self.voca_size, self.embd_size, trainable=trainable, name=pf+'EM', embeddings_initializer='glorot_uniform')
             x = embd(inputs_text)
         
             count = '1'
@@ -94,16 +94,16 @@ class ShopNet :
             x = tf.keras.layers.Dropout(0.25, name=pf+'DR'+count)(x)
 
             count = '2'
-            x = tf.keras.layers.Dense(512, trainable=trainable, name=pf+'DS'+count)(x)
+            x = tf.keras.layers.Dense(1024, trainable=trainable, name=pf+'DS'+count)(x)
             x = tf.keras.layers.BatchNormalization(trainable=trainable, name=pf+'BN'+count)(x)
             x = tf.keras.layers.Activation('elu', name=pf+'A'+count)(x)
-            x = tf.keras.layers.Dropout(0.5, name=pf+'DR'+count)(x)
+            x = tf.keras.layers.Dropout(0.25, name=pf+'DR'+count)(x)
 
             count = '3'
             x = tf.keras.layers.Dense(1024, trainable=trainable, name=pf+'DS'+count)(x)
             x = tf.keras.layers.BatchNormalization(trainable=trainable, name=pf+'BN'+count)(x)
             x = tf.keras.layers.Activation('elu', name=pf+'A'+count)(x)
-            x = tf.keras.layers.Dropout(0.5, name=pf+'DR'+count)(x)
+            x = tf.keras.layers.Dropout(0.25, name=pf+'DR'+count)(x)
 
             with tf.name_scope('classify') :
                 b = tf.keras.layers.Dense(self.N_Cb, activation='softmax', name=pf+'b')(x)
@@ -114,7 +114,7 @@ class ShopNet :
         return tf.keras.Model(inputs=[inputs_text], outputs=[b, m, s, d])
 
 
-    def ensemble_model(self, models) :
+    def ensemble_model(self, models, load=False) :
         for i in range(len(models)) :
             model = models[i]
             with tf.name_scope('model_'+str(i)) :
@@ -144,7 +144,7 @@ class ShopNet :
         return [tf.keras.models.load_model(path) for path in paths]
 
 
-    def train(self, datafile=opt.data_root + 'train/data.h5py', case = 'image', batch_size=opt.batch_size, save_dir=opt.model_root, lr=opt.lr,loss_weights=opt.loss_weights,num_epochs=opt.num_epochs) :
+    def train(self, datafile=opt.data_root + 'train/data.h5py', case = 'image', load=True, batch_size=opt.batch_size, save_dir=opt.model_root, lr=opt.lr,loss_weights=opt.loss_weights,num_epochs=opt.num_epochs) :
         def generator(ds, batch_size, case='image', raise_stop_event=False):
             """
             data generator for training and validation.
@@ -204,14 +204,14 @@ class ShopNet :
 
         # construct model
         if case == 'image' :
-            model = self.model_image()
+            model = self.model_image(load=load)
         elif case == 'text' :
-            model = self.model_text()
+            model = self.model_text(load=load)
         elif case == 'ensemble' :
             models = self.load_models(['./mymodel1/image_model.h5','./mymodel1/textLSTM_model.h5'])
-            model = self.ensemble_model(models)
+            model = self.ensemble_model(models, load=load)
         else :
-            assert True, 'wrong input. case must be one of ["image", "text", "ensemble"]'
+            assert False, 'wrong input. case must be one of ["image", "text", "ensemble"]'
 
 
         # model = tf.keras.models.load_model("./mymodel1/my_model.h5")
@@ -271,7 +271,7 @@ class ShopNet :
         open(save_dir + 'history.pk', 'wb').write(pickle.dumps(history.history, 2))
 
 
-    def predict(self, model_dir='mymodel1/', datafile='./processed_data/train/data.h5py', writefile = './predict_result.tsv', datakind="train") :
+    def predict(self, model_dir=opt.model_root, datakind="train", writefile = './predict_result.tsv') :
         """
         predict using trained model
         """
@@ -284,6 +284,7 @@ class ShopNet :
         # model = tf.keras.models.load_model(model_path, custom_objects={'acc_igm1' : acc_igm1})
         print(model.summary())
 
+        datafile = opt.data_root + datakind + '/data.h5py'
         ds = h5py.File(datafile, 'r')['dev']
 
         m = ds['img_feat'].shape[0]
