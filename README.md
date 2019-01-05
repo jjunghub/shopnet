@@ -25,11 +25,19 @@ havesd
 
 ```
 # check config's word_path, *_data_list, data_root, max_len
+# for trainset
 python3 datashopnet.py make-db train --train-ratio=0.85 --sequence=True
+
+# for validation set
+python3 datashopnet.py make-db dev --train-ratio=0 --sequence=True
+
+# for test set
+python3 datashopnet.py make-db test --train-ratio=0 --sequence=True
+
 ```
 
 ## 3. train
 
 ```
-shopnet_ensemble.py train --case='image' --load=False
+python3 shopnet_ensemble.py train --case='image' --load=False
 ```

@@ -36,11 +36,11 @@ class ShopNet :
 
     def model_image(self, trainable=True, load=False) :
         if load :
-            # model = tf.keras.models.load_model("./ensemble1/image_model.h5")
-            model = self.model_image(load=False)
-            latest = 'ensemble1/cp-0006-4.415.ckpt'
-            model.load_weights(latest)
-            print("Restore saved weights on {}.".format(latest))
+            model = tf.keras.models.load_model("./ensemble/image/model.h5")
+            # model = self.model_image(load=False)
+            # latest = 'ensemble/image/cp-0008-4.215.ckpt'
+            # model.load_weights(latest)
+            # print("Restore saved weights on {}.".format(latest))
 
         else :
             with tf.variable_scope('image_classifier') :
@@ -66,6 +66,50 @@ class ShopNet :
                 x = tf.keras.layers.BatchNormalization(trainable=trainable, name=pf+'BN'+count)(x)
                 x = tf.keras.layers.Activation('relu', name=pf+'A'+count)(x)
                 x = tf.keras.layers.Dropout(0.25, name=pf+'DR'+count)(x)
+
+
+                with tf.name_scope('classify') :
+                    b = tf.keras.layers.Dense(self.N_Cb, activation='softmax', name=pf+'b')(x)
+                    m = tf.keras.layers.Dense(self.N_Cm, activation='softmax', name=pf+'m')(x)
+                    s = tf.keras.layers.Dense(self.N_Cs, activation='softmax', name=pf+'s')(x)
+                    d = tf.keras.layers.Dense(self.N_Cd, activation='softmax', name=pf+'d')(x)
+
+            model = tf.keras.Model(inputs=[inputs_img], outputs=[b, m, s, d])
+
+        return model
+
+    def model_image2(self, trainable=True, load=False) :
+        if load :
+            model = tf.keras.models.load_model("./ensemble/image/model.h5")
+            # model = self.model_image(load=False)
+            # latest = 'ensemble/image/cp-0008-4.215.ckpt'
+            # model.load_weights(latest)
+            # print("Restore saved weights on {}.".format(latest))
+
+        else :
+            with tf.variable_scope('image_classifier') :
+                pf = 'img'
+
+                inputs_img = tf.keras.Input(shape=(self.N_IMG_FEAT,), name=pf+'IN')
+
+                count='1'
+                x = tf.keras.layers.Dense(512, trainable=trainable, name=pf+'DS'+count)(inputs_img)
+                x = tf.keras.layers.BatchNormalization(trainable=trainable, name=pf+'BN'+count)(x)
+                x = tf.keras.layers.Activation('relu', name=pf+'A'+count)(x)
+                x_res = tf.keras.layers.Dropout(0.2, name=pf+'DR'+count)(x)
+
+                count='2'
+                x = tf.keras.layers.Dense(512, trainable=trainable, name=pf+'DS'+count)(x_res)
+                x = tf.keras.layers.BatchNormalization(trainable=trainable, name=pf+'BN'+count)(x)
+                x = tf.keras.layers.Activation('relu', name=pf+'A'+count)(x)
+                x = tf.keras.layers.Dropout(0.2, name=pf+'DR'+count)(x)
+
+                count='3'
+                x = tf.keras.layers.Dense(512, trainable=trainable, name=pf+'DS'+count)(x)
+                x = tf.keras.layers.concatenate([x, x_res], axis=-1, name=pf+'CON'+count)
+                x = tf.keras.layers.BatchNormalization(trainable=trainable, name=pf+'BN'+count)(x)
+                x = tf.keras.layers.Activation('relu', name=pf+'A'+count)(x)
+                x = tf.keras.layers.Dropout(0.2, name=pf+'DR'+count)(x)
 
 
                 with tf.name_scope('classify') :
@@ -204,7 +248,7 @@ class ShopNet :
 
         # construct model
         if case == 'image' :
-            model = self.model_image(load=load)
+            model = self.model_image2(load=load)
         elif case == 'text' :
             model = self.model_text(load=load)
         elif case == 'ensemble' :
@@ -237,7 +281,7 @@ class ShopNet :
         val_generator = generator(data['dev'], batch_size, case = case)
 
         ## checkpoint callback
-        ckpt_path = save_dir + case + 'cp-{epoch:04d}-{val_loss:.3f}.ckpt'
+        ckpt_path = save_dir + case + '/' + 'cp-{epoch:04d}-{val_loss:.3f}.ckpt'
         ckpt_dir = os.path.dirname(ckpt_path)
         if not os.path.isdir(ckpt_dir) :
             os.makedirs(ckpt_dir)
@@ -265,7 +309,7 @@ class ShopNet :
 
         # save model
         # model.load_weights(ckpt_path)
-        model_path = save_dir + case + 'LSTM_model.h5'
+        model_path = save_dir + case + '/' + 'lastmodel.h5'
         model.save(model_path)
 
         open(save_dir + 'history.pk', 'wb').write(pickle.dumps(history.history, 2))
@@ -279,7 +323,8 @@ class ShopNet :
 
         # model = self.model()
         # model.load_weights(model_dir + 'cp-0004-1.628.ckpt')
-        model_path = model_dir + 'ensemble_model.h5'
+        # model_path = model_dir + 'ensemble_model.h5'
+        model_path = model_dir + 'image/model.h5'
         model = tf.keras.models.load_model(model_path) # with tf eager execution
         # model = tf.keras.models.load_model(model_path, custom_objects={'acc_igm1' : acc_igm1})
         print(model.summary())
@@ -288,7 +333,7 @@ class ShopNet :
         ds = h5py.File(datafile, 'r')['dev']
 
         m = ds['img_feat'].shape[0]
-        step = 10000
+        step = 1000000
         result = {}
 
         # to change index of max probability to category label.
@@ -302,7 +347,8 @@ class ShopNet :
             text_feat = ds['uni'][i:min(m, i+step)]
             # text_brand_feat = ds['uni_brand'][i:min(m, i+step)]
 
-            prob_b, prob_m, prob_s, prob_d = model.predict([img_feat, text_feat])
+            # prob_b, prob_m, prob_s, prob_d = model.predict([img_feat, text_feat])
+            prob_b, prob_m, prob_s, prob_d = model.predict([img_feat])
             c_b = [idx_C['b'].get(int(each)) for each in np.argmax(prob_b, axis=-1)]
             c_m = [idx_C['m'].get(int(each)) for each in np.argmax(prob_m, axis=-1)]
             c_s = [idx_C['s'].get(int(each)) for each in np.argmax(prob_s, axis=-1)]
