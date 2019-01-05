@@ -124,39 +124,47 @@ class ShopNet :
 
 
     def model_text(self, trainable = True, load=False) : 
-        with tf.name_scope('text_classifier') :
-            pf = 'GAP'
+        if load :
+            # model = tf.keras.models.load_model("./ensemble/text/model.h5")
+            model = self.model_text(load=False)
+            latest = 'ensemble/text/cp-0001-1.704.ckpt'
+            model.load_weights(latest)
+            print("Restore saved weights on {}.".format(latest))
 
-            inputs_text = tf.keras.Input(shape=(opt.max_len,), name=pf+'IN')
+        else :
+            with tf.name_scope('text_classifier') :
+                pf = 'GAP'
 
-            embd = tf.keras.layers.Embedding(self.voca_size, self.embd_size, trainable=trainable, name=pf+'EM', embeddings_initializer='glorot_uniform')
-            x = embd(inputs_text)
-        
-            count = '1'
-            # x = tf.keras.layers.LSTM(opt.embd_size, return_sequences=False, recurrent_dropout=0.25, trainable=trainable)(x)
-            x = tf.keras.layers.GlobalAveragePooling1D(name=pf+'AP'+count)(x)
-            x = tf.keras.layers.Dropout(0.25, name=pf+'DR'+count)(x)
+                inputs_text = tf.keras.Input(shape=(opt.max_len,), name=pf+'IN')
 
-            count = '2'
-            x = tf.keras.layers.Dense(1024, trainable=trainable, name=pf+'DS'+count)(x)
-            x = tf.keras.layers.BatchNormalization(trainable=trainable, name=pf+'BN'+count)(x)
-            x = tf.keras.layers.Activation('elu', name=pf+'A'+count)(x)
-            x = tf.keras.layers.Dropout(0.25, name=pf+'DR'+count)(x)
+                embd = tf.keras.layers.Embedding(self.voca_size, self.embd_size, trainable=trainable, name=pf+'EM', embeddings_initializer='glorot_uniform')
+                x = embd(inputs_text)
+            
+                count = '1'
+                # x = tf.keras.layers.LSTM(opt.embd_size, return_sequences=False, recurrent_dropout=0.25, trainable=trainable)(x)
+                x = tf.keras.layers.GlobalAveragePooling1D(name=pf+'AP'+count)(x)
+                x = tf.keras.layers.Dropout(0.25, name=pf+'DR'+count)(x)
 
-            count = '3'
-            x = tf.keras.layers.Dense(1024, trainable=trainable, name=pf+'DS'+count)(x)
-            x = tf.keras.layers.BatchNormalization(trainable=trainable, name=pf+'BN'+count)(x)
-            x = tf.keras.layers.Activation('elu', name=pf+'A'+count)(x)
-            x = tf.keras.layers.Dropout(0.25, name=pf+'DR'+count)(x)
+                count = '2'
+                x = tf.keras.layers.Dense(1024, trainable=trainable, name=pf+'DS'+count)(x)
+                x = tf.keras.layers.BatchNormalization(trainable=trainable, name=pf+'BN'+count)(x)
+                x = tf.keras.layers.Activation('elu', name=pf+'A'+count)(x)
+                x = tf.keras.layers.Dropout(0.5, name=pf+'DR'+count)(x) #0.25=>0.5
 
-            with tf.name_scope('classify') :
-                b = tf.keras.layers.Dense(self.N_Cb, activation='softmax', name=pf+'b')(x)
-                m = tf.keras.layers.Dense(self.N_Cm, activation='softmax', name=pf+'m')(x)
-                s = tf.keras.layers.Dense(self.N_Cs, activation='softmax', name=pf+'s')(x)
-                d = tf.keras.layers.Dense(self.N_Cd, activation='softmax', name=pf+'d')(x)
+                count = '3'
+                x = tf.keras.layers.Dense(1024, trainable=trainable, name=pf+'DS'+count)(x)
+                x = tf.keras.layers.BatchNormalization(trainable=trainable, name=pf+'BN'+count)(x)
+                x = tf.keras.layers.Activation('elu', name=pf+'A'+count)(x)
+                x = tf.keras.layers.Dropout(0.5, name=pf+'DR'+count)(x) #0.25=>0.5
 
-        return tf.keras.Model(inputs=[inputs_text], outputs=[b, m, s, d])
+                with tf.name_scope('classify') :
+                    b = tf.keras.layers.Dense(self.N_Cb, activation='softmax', name=pf+'b')(x)
+                    m = tf.keras.layers.Dense(self.N_Cm, activation='softmax', name=pf+'m')(x)
+                    s = tf.keras.layers.Dense(self.N_Cs, activation='softmax', name=pf+'s')(x)
+                    d = tf.keras.layers.Dense(self.N_Cd, activation='softmax', name=pf+'d')(x)
 
+            model = tf.keras.Model(inputs=[inputs_text], outputs=[b, m, s, d])
+        return model
 
     def ensemble_model(self, models, load=False) :
         for i in range(len(models)) :
@@ -170,10 +178,10 @@ class ShopNet :
         # print(concate_layers)
 
         x = tf.keras.layers.concatenate(concate_layers, axis=-1)        
-        x = tf.keras.layers.Dense(512)(x)
+        x = tf.keras.layers.Dense(1024)(x)
         x = tf.keras.layers.BatchNormalization()(x)
         x = tf.keras.layers.Activation('elu')(x)
-        x = tf.keras.layers.Dropout(0.5)(x)
+        x = tf.keras.layers.Dropout(0.25)(x)
 
         with tf.name_scope('classify') :
             b = tf.keras.layers.Dense(self.N_Cb, activation='softmax', name='b')(x)
@@ -252,7 +260,7 @@ class ShopNet :
         elif case == 'text' :
             model = self.model_text(load=load)
         elif case == 'ensemble' :
-            models = self.load_models(['./mymodel1/image_model.h5','./mymodel1/textLSTM_model.h5'])
+            models = self.load_models(['./ensemble/image/model.h5','./ensemble/text/model.h5'])
             model = self.ensemble_model(models, load=load)
         else :
             assert False, 'wrong input. case must be one of ["image", "text", "ensemble"]'
@@ -297,7 +305,7 @@ class ShopNet :
         cp_callback = tf.keras.callbacks.ModelCheckpoint(ckpt_path,
                                                 save_weights_only=True,
                                                 verbose=1,
-                                                period=2,
+                                                period=1,
                                                 save_best_only=False)
 
         # train model
@@ -308,8 +316,8 @@ class ShopNet :
                                     callbacks=[cp_callback])      
 
         # save model
-        # model.load_weights(ckpt_path)
-        model_path = save_dir + case + '/' + 'lastmodel.h5'
+
+        model_path = save_dir + case + '/model400.h5'
         model.save(model_path)
 
         open(save_dir + 'history.pk', 'wb').write(pickle.dumps(history.history, 2))
@@ -323,8 +331,10 @@ class ShopNet :
 
         # model = self.model()
         # model.load_weights(model_dir + 'cp-0004-1.628.ckpt')
+        
         # model_path = model_dir + 'ensemble_model.h5'
-        model_path = model_dir + 'image/model.h5'
+        model_path = model_dir + 'ensemble/model.h5'
+
         model = tf.keras.models.load_model(model_path) # with tf eager execution
         # model = tf.keras.models.load_model(model_path, custom_objects={'acc_igm1' : acc_igm1})
         print(model.summary())

@@ -1,12 +1,12 @@
 Environment :
 
-- python ver.
-- tensorflow ver.
+- python ver.3.6.5
+- tensorflow ver.1.12.0
 
 ## 1. generate word idx
 
 ```
-words.py make-dict
+python3 words.py make-dict
 ```
 
 set store path on config.json -> word_path
@@ -33,11 +33,14 @@ python3 datashopnet.py make-db dev --train-ratio=0 --sequence=True
 
 # for test set
 python3 datashopnet.py make-db test --train-ratio=0 --sequence=True
-
 ```
 
 ## 3. train
 
 ```
 python3 shopnet_ensemble.py train --case='image' --load=False
+
+python3 shopnet_ensemble.py train --case='text' --load=False
+
+python3 shopnet_ensemble.py train --case='ensemble' --load=False
 ```
