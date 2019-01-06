@@ -16,5 +16,5 @@ if __name__ == '__main__':
 	shopnet.train(case='text', load=True, lr=0.0001, num_epochs=10)
 
 	# train ensemble classifier
-	shopnet.train(case='ensemble', load=False, lr=0.001, num_epochs=3)
+	shopnet.train(case='ensemble', load=False, lr=0.001, num_epochs=10)
 

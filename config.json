@@ -27,8 +27,8 @@
   "num_predict_workers": 2,
   "embd_size": 100,
   "lr": 1e-4,
-  "loss_weights": [1.0, 1.2, 1.4, 1.0],
+  "loss_weights": [1.0, 2.0, 2.0, 1.0],
   "num_epochs": 2,
   "batch_size": 512,
-  "model_root": "codetest/"
+  "model_root": "finalmodel/"
 }
