@@ -48,7 +48,7 @@ python3 shopnet.py train --case='ensemble' --load=False
 
 1. 제출모델을 [다운로드](https://drive.google.com/open?id=16cbbN34hiDKCknf47Te_7lLnWQdZmxSb) 합니다.
 2. `python3 datashopnet.py make-db test --train-ratio=0 --sequence=Fasle` 를 실행하여 전처리된 데이터셋을 만들어줍니다.
-3. `inference.py` 코드의 SUBMIT_MODEL : [다운로드한 모델의 경로] , PROCESSED DATA : [전처리된 데이터 셋 경로] 로 설정 후,
+3. `inference.py` 코드의 SUBMIT_MODEL : [다운로드한 모델의 경로] 로 설정 후,
 
 ```
 python3 inference.py
