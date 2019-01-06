@@ -20,16 +20,6 @@ set storing path at word_path in `config.json`
 $ python3 words.py make-dict
 ```
 
-all
-[INFO ] 2019-01-05 15:23:36 [words.py][get_meta_words:164] total 2437602 words
-[INFO ] 2019-01-05 15:23:40 [words.py][get_word_idx:116] Total **500,408** words to be embedded are selected.
-4,202 words from category-name and 500,000 from meta-info(least common word : ('방수방진기능', 5))
-
-havesd
-[INFO ] 2019-01-05 15:29:01 [words.py][get_meta_words:164] total 2044802 words
-[INFO ] 2019-01-05 15:29:04 [words.py][get_word_idx:116] Total **500,424** words to be embedded are selected.
-4,202 words from category-name and 500,000 from meta-info(least common word : ('산초분말', 4))
-
 ### STEP 2. prepare train/dev data with text indexing
 
 ```
@@ -56,7 +46,7 @@ python3 shopnet.py train --case='ensemble' --load=False
 
 ## 제출 모델로 부터 결과 재현
 
-1. 제출모델을 [다운로드]() 합니다.
+1. 제출모델을 [다운로드](https://drive.google.com/open?id=16cbbN34hiDKCknf47Te_7lLnWQdZmxSb) 합니다.
 2. `python3 datashopnet.py make-db test --train-ratio=0 --sequence=Fasle` 를 실행하여 전처리된 데이터셋을 만들어줍니다.
 3. `inference.py` 코드의 SUBMIT_MODEL : [다운로드한 모델의 경로] , PROCESSED DATA : [전처리된 데이터 셋 경로] 로 설정 후,
 
