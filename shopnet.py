@@ -191,7 +191,7 @@ class ShopNet :
             # print(concate_layers)
 
             x = tf.keras.layers.concatenate(concate_layers, axis=-1)        
-            x = tf.keras.layers.Dense(1024)(x)
+            x = tf.keras.layers.Dense(256)(x)
             x = tf.keras.layers.BatchNormalization()(x)
             x = tf.keras.layers.Activation('elu')(x)
             # x = tf.keras.layers.Dropout(0.25)(x)
