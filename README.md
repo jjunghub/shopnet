@@ -67,10 +67,5 @@ python3 inference.py
 
 ## 모델 재현
 
-1. 학습에 사용할 전처리된 데이터셋을 준비합니다.
-
-```
-python3 datashopnet.py make-db test --train-ratio=0.95 --sequence=True
-```
-
-2.
+1. `python3 datashopnet.py make-db train --train-ratio=0.95 --sequence=Fasle` 를 수행하여 학습에 사용할 전처리된 데이터셋을 준비합니다.
+2. `python3 train.py` 를 수행하여 학습을 진행합니다.
