@@ -8,11 +8,13 @@ Environment :
 - [프로젝트 과정정리]()
 - [블로그 글]()
 
-contents description 
+Contents description 
 - 필수 
+  * `config.json` : 데이터 경로 등의 실행 환경 지정
   * `words.py` : get important words list to be embedded
   * `datashopnet.py` : make pre-processed dataset with word indexing
-  * `shopnet.py` :  define classification model with tensorflow
+  * `shopnet.py` :  define classification model with tensorflow, train, evaluate
+  * `misc.py` : 기타 모듈
 - 기타
   * `inference.py`, `train.py` : kakao arena 채점을 위한 예측결과재현, 모델 재현용 코드 
   * `eda.py` : 제공된 데이터 탐색 및 모델 구상을 위한 코드
