@@ -509,7 +509,7 @@ class ShopNet :
         ds = h5py.File(datafile, 'r')['dev']
 
         m = ds['img_feat'].shape[0]
-        step = 100000
+        step = 10000
         result = {}
 
         # to change index of max probability to category label.
@@ -574,16 +574,16 @@ class ShopNet :
                 return
 
 
-        print('Successfully predict for {} data!'.format(m))
+        self.logger.info('Successfully predict for {} data!'.format(m))
         self.write_prediction(result, datakind, writefile)
 
     def write_prediction(self, result, datakind, writefile) :
         ORDERED_LIST = []
         pid_order = []
         if datakind == "dev" :
-            ORDERED_LIST = opt.dev_data_list
+            ORDERED_LIST = [os.path.join(data_root,filename) for filename in opt.dev_data_list]
         elif datakind == "test" :
-            ORDERED_LIST = opt.test_data_list
+            ORDERED_LIST = [os.path.join(data_root,filename) for filename in opt.test_data_list]
 
         for data_path in ORDERED_LIST:
             h = h5py.File(data_path, 'r')[datakind]
