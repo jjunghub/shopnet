@@ -407,8 +407,6 @@ class ShopNet :
                 elif case == 'ensemble' :
                     yield [X_img, X_text], [onehots['b'], onehots['m'],onehots['s'],onehots['d']]
 
-
-
                 left = right
                 if left == limit:
                     left = 0
@@ -503,7 +501,7 @@ class ShopNet :
 
         model = tf.keras.models.load_model(model_path) # with tf eager execution
         # model = tf.keras.models.load_model(model_path, custom_objects={'acc_igm1' : acc_igm1})
-        print(model.summary())
+        model.summary()
 
         # datafile = opt.data_root + datakind + '/data.h5py'
         ds = h5py.File(datafile, 'r')['dev']
@@ -581,9 +579,9 @@ class ShopNet :
         ORDERED_LIST = []
         pid_order = []
         if datakind == "dev" :
-            ORDERED_LIST = [os.path.join(data_root,filename) for filename in opt.dev_data_list]
+            ORDERED_LIST = [os.path.join(opt.rawdata_location,filename) for filename in opt.dev_data_list]
         elif datakind == "test" :
-            ORDERED_LIST = [os.path.join(data_root,filename) for filename in opt.test_data_list]
+            ORDERED_LIST = [os.path.join(opt.rawdata_location,filename) for filename in opt.test_data_list]
 
         for data_path in ORDERED_LIST:
             h = h5py.File(data_path, 'r')[datakind]
@@ -606,7 +604,7 @@ class ShopNet :
                 fout.write(ans)
                 fout.write('\n')
         
-        print('predict results are written on {}'.format(writefile))
+        self.logger.info('predict results are written on {}'.format(writefile))
 
 
 if __name__ == '__main__':
