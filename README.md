@@ -2,7 +2,7 @@
   - python ver.3.6.5
   - tensorflow ver.1.12.0
 
-- 관련 링크 : [카카오 아레나](https://arena.kakao.com/c/1), [프로젝트 과정정리](https://github.com/jjunghub/shopnet/blob/master/Project%20process.ipynb), [블로그](https://jjunghub.github.io/blog/from%20mistakes/ai/2019/01/08/fromkakao.html)
+- 관련 링크 : [카카오 아레나](https://arena.kakao.com/c/1), [프로젝트 과정정리(정리중)](https://github.com/jjunghub/shopnet/blob/master/Project%20process.ipynb), [블로그](https://jjunghub.github.io/blog/from%20mistakes/ai/2019/01/08/fromkakao.html)
 
 - Contents description 
   - 필수 
