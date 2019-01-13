@@ -151,7 +151,7 @@ class Words:
     def get_category_words(self) :
         import json
 
-        catefile = opt.dataset_location + opt.cate_filename
+        catefile = os.path.join(opt.rawdata_location, opt.cate_filename)
         cate1 = json.loads(open(catefile, 'rb').read().decode('utf-8'))
 
         words = []
@@ -168,7 +168,7 @@ class Words:
         pool = Pool(opt.num_workers)
         try :
             g_words = pool.map_async(_get_meta_words, 
-                                   [(data_path, div)
+                                   [(os.path.join(opt.rawdata_location, data_path), div)
                                     for data_path in opt[datalist_name]]).get(999999)
             pool.close()
             pool.join()  
