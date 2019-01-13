@@ -151,7 +151,7 @@ class ShopNet :
             # model = tf.keras.Model(inputs=[inputs_text], outputs=[b, m, s, d])
 
             with tf.name_scope('text_classifier') :
-                pf = 'GAP'
+                pf = 'GAP'   # using Global Average Pooling1D
 
                 inputs_text = tf.keras.Input(shape=(opt.max_len,), name=pf+'IN')
 
@@ -350,6 +350,7 @@ class ShopNet :
         model.save(model_path)
 
         open(save_dir + 'history.pk', 'wb').write(pickle.dumps(history.history, 2))
+        self.logger.info('Save model on {}'.format(model_path))
 
 
 
