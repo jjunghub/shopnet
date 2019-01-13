@@ -3,10 +3,7 @@ Environment :
 - python ver.3.6.5
 - tensorflow ver.1.12.0
 
-관련 링크 :
-- [카카오 아레나]()
-- [프로젝트 과정정리]()
-- [블로그 글]()
+관련 링크 : [카카오 아레나](https://arena.kakao.com/c/1), [프로젝트 과정정리](), [블로그 글](https://jjunghub.github.io/blog/from%20mistakes/ai/2019/01/08/fromkakao.html)
 
 Contents description 
 - 필수 
