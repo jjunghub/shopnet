@@ -18,7 +18,7 @@
 """
 # datashopnet.py
 # written by jjung 2018.12.15
-# raw dataset to pre-processed datset with word indexing.
+# make pre-processed dataset with word indexing.
 """
 
 import os
