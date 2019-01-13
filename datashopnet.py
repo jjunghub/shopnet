@@ -292,19 +292,20 @@ class Data:
         return train_indices, train_size
 
     def make_db(self, data_name, train_ratio=0.8, sequence=True):
+        data_root = opt.rawdata_location
         if data_name == 'train':
             div = 'train'
-            data_path_list = opt.train_data_list
+            data_path_list = [os.path.join(data_root,filename) for filename in opt.train_data_list]
             output_path = opt.data_root + "train/data.h5py"
 
         elif data_name == 'dev':
             div = 'dev'
-            data_path_list = opt.dev_data_list
+            data_path_list = [os.path.join(data_root,filename) for filename in opt.dev_data_list]
             output_path = opt.data_root + "dev/data.h5py"
 
         elif data_name == 'test':
             div = 'test'
-            data_path_list = opt.test_data_list
+            data_path_list = [os.path.join(data_root,filename) for filename in opt.test_data_list]
             output_path = opt.data_root + "test/data.h5py"
 
         else:
