@@ -1,21 +1,20 @@
-Environment :
+- Environment :
+  - python ver.3.6.5
+  - tensorflow ver.1.12.0
 
-- python ver.3.6.5
-- tensorflow ver.1.12.0
+- 관련 링크 : [카카오 아레나](https://arena.kakao.com/c/1), [프로젝트 과정정리](), [블로그 글](https://jjunghub.github.io/blog/from%20mistakes/ai/2019/01/08/fromkakao.html)
 
-관련 링크 : [카카오 아레나](https://arena.kakao.com/c/1), [프로젝트 과정정리](), [블로그 글](https://jjunghub.github.io/blog/from%20mistakes/ai/2019/01/08/fromkakao.html)
-
-Contents description 
-- 필수 
-  * `config.json` : 데이터 경로 등의 실행 환경 지정
-  * `words.py` : get important words list to be embedded
-  * `datashopnet.py` : make pre-processed dataset with word indexing
-  * `shopnet.py` :  define classification model with tensorflow, train, evaluate
-  * `misc.py` : 기타 모듈
-- 기타
-  * `inference.py`, `train.py` : kakao arena 채점을 위한 예측결과재현, 모델 재현용 코드 
-  * `eda.py` : 제공된 데이터 탐색 및 모델 구상을 위한 코드
-  * `words dir` :  words.py를 실행한 후 결과파일
+- Contents description 
+  - 필수 
+    * `config.json` : 데이터 경로 등의 실행 환경 지정
+    * `words.py` : get important words list to be embedded
+    * `datashopnet.py` : make pre-processed dataset with word indexing
+    * `shopnet.py` :  define classification model with tensorflow, train, evaluate
+    * `misc.py` : 기타 모듈
+  - 기타
+    * `inference.py`, `train.py` : kakao arena 채점을 위한 예측결과재현, 모델 재현용 코드 
+    * `eda.py` : 제공된 데이터 탐색 및 모델 구상을 위한 코드
+    * `words dir` :  words.py를 실행한 후 결과파일
 
 ## 모델 설명
 
