@@ -153,6 +153,12 @@ class Data:
         self.logger = get_logger('data')
         self.word_to_idx = self.load_word_to_idx()
 
+        # make temporary save dir if not exists
+        tempdir = os.path.dirname(self.tmp_chunk_tpl)
+        if not os.path.isdir(tempdir) :
+            os.makedirs(tempdir)
+
+
     def load_word_to_idx(self) :
         load_path = opt.word_path
         return pickle.load(open(load_path, 'rb'))
