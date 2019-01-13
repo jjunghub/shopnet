@@ -9,7 +9,7 @@
     * `config.json` : 데이터 경로 등의 실행 환경 지정
     * `words.py` : get important words list to be embedded
     * `datashopnet.py` : make pre-processed dataset with word indexing
-    * `shopnet.py` :  define classification model with tensorflow, train, evaluate
+    * `shopnet.py` :  define classification model with tensorflow/train model/evaluate model
     * `misc.py` : 기타 모듈
   - 기타
     * `inference.py`, `train.py` : kakao arena 채점을 위한 예측결과재현, 모델 재현용 코드 
@@ -51,16 +51,20 @@ $ python3 words.py make-dict
 ```
 
 ### STEP 2. prepare train/dev data with text indexing
+check word_path, *_data_list, data_root, max_len in `config.json`
 
+for trainset
 ```
-# check word_path, *_data_list, data_root, max_len in `config.json`
-# for trainset
 $ python3 datashopnet.py make-db train --train-ratio=0.95 --sequence=False
+```
 
-# for validation set
+for validation set
+```
 $ python3 datashopnet.py make-db dev --train-ratio=0 --sequence=False
+```
 
-# for test set
+for test set
+```
 $ python3 datashopnet.py make-db test --train-ratio=0 --sequence=False
 ```
 
